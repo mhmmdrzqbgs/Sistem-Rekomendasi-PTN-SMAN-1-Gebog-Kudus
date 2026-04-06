@@ -1,112 +1,157 @@
-# Sistem Pendukung Keputusan Rekomendasi Jurusan & PTN
+**Sistem Pendukung Keputusan Rekomendasi Jurusan & PTN SMAN 1 Gebog**
+Aplikasi web berbasis PHP Native dan MySQL untuk membantu siswa SMA dalam menentukan jurusan dan Perguruan Tinggi Negeri (PTN) berdasarkan nilai Rapor (SNBP) dan skor Try Out UTBK (SNBT). Sistem ini dirancang untuk mendukung Kurikulum Merdeka (mengakomodasi peminatan/rumpun) dan menggunakan algoritma Rule-Based System dipadukan dengan Closest Match Heuristic.
 
-Aplikasi web berbasis PHP native dan MySQL untuk membantu siswa SMA dalam menentukan jurusan dan perguruan tinggi negeri di Jawa Tengah dan DIY berdasarkan nilai rapor dan UTBK.
+**🚀 Fitur Utama**
+**🧑‍🎓 Untuk Siswa**
+Dashboard Interaktif - Ringkasan nilai, tren grafik rapor, dan highlight rekomendasi paling aman.
 
-## Fitur Utama
+Profil & Minat - Pemilihan rumpun belajar dan input minat jurusan/PTN secara spesifik.
 
-### Untuk Siswa
-- **Dashboard** - Ringkasan nilai dan rekomendasi
-- **Input Nilai Rapor** - Semester 1-6 dengan mata pelajaran lengkap
-- **Input Nilai Try Out** - Skor UTBK/SNBT
-- **Rekomendasi Top 3** - Jurusan dan PTN berdasarkan kecocokan skor
-- **Analisis Nilai** - Visualisasi perkembangan nilai
+Input Nilai Terintegrasi:
 
-### Untuk Admin/Guru BK
-- **Dashboard Admin** - Statistik siswa dan rekomendasi
-- **Kelola Data Siswa** - Import via Excel, input manual
-- **Kelola PTN & Prodi** - Master data perguruan tinggi
-- **Import Benchmark** - Upload cutoff SNBP/SNBT via Excel
-- **Laporan** - Analisis data siswa
+Nilai Rapor: Semester 1-5 dengan detail mata pelajaran (mendukung logika Kurikulum Merdeka).
 
-## Algoritma Rekomendasi
+Nilai TKA: Matematika, Bahasa Indonesia, Bahasa Inggris, dan Mapel Pilihan.
 
-### SNBP (Berdasarkan Nilai Rapor)
-1. **Perhitungan Skor**: Menggunakan bobot mata pelajaran per prodi
-2. **Jika ada bobot**: Skor = Σ(nilai_mapel × bobot) / Σ(bobot)
-3. **Jika tidak ada bobot**: Skor = rata-rata rapor
-4. **Estimasi Peluang**:
-   - Tinggi: skor ≥ cutoff_avg
-   - Sedang: cutoff_min ≤ skor < cutoff_avg
-   - Rendah: skor < cutoff_min
+Nilai Try Out: 7 Subtes UTBK/SNBT.
 
-### SNBT (Berdasarkan Nilai Try Out)
-1. **Skor**: Total skor UTBK (TPS + Literasi Indo + Literasi Ing + Penalaran MTK)
-2. **Estimasi Peluang**: Sama dengan SNBP
+Rekomendasi Cerdas (5+5) - Menghasilkan maksimal 5 rekomendasi Saintek dan 5 Soshum per jalur evaluasi.
 
-### Ranking
-- Urutkan berdasarkan peluang (Tinggi > Sedang > Rendah)
-- Kemudian berdasarkan skor tertinggi
-- Ambil Top 3 per jalur (SNBP/SNBT)
+Cetak Dokumen - Laporan Hasil Analisis Akademik dan Rekomendasi Studi berformat PDF resmi bergaya profesional.
 
-## Struktur Database
+**👨‍🏫 Untuk Admin / Guru BK**
+Dashboard Analitik - Statistik siswa, daftar rekomendasi tertinggi (Top Saintek/Soshum), dan tren mapel pilihan.
 
-### Tabel Utama
-- `users` - Data login (siswa/admin)
-- `siswa_profile` - Profil siswa
-- `nilai_rapor` - Nilai rapor per semester
-- `nilai_tryout` - Nilai try out UTBK
-- `ptn` - Data perguruan tinggi
-- `prodi` - Program studi
-- `cutoff_prodi` - Benchmark cutoff per prodi
-- `bobot_mapel` - Bobot mata pelajaran per prodi
-- `rekomendasi` - Hasil rekomendasi
+Manajemen Master Data - Kelola data PTN, Program Studi (beserta Daya Tampung & Passing Grade), dan Master Mapel.
 
-## Instalasi
+Kelola Data Siswa - Pemantauan nilai, input/edit data siswa secara manual.
 
-1. **Clone Repository**
-   ```bash
-   git clone <repository-url>
-   cd webdinda
-   ```
+Import Massal (Excel) - Fitur Upload data via Excel terintegrasi (Siswa, Rapor, TKA, Tryout, dan Prodi) menggunakan PhpSpreadsheet.
 
-2. **Install Dependencies**
-   ```bash
-   composer install
-   ```
+Laporan & Filtering - Daftar siswa dengan filter cerdas berdasarkan peluang kelulusan (Tinggi, Sedang, Rendah) yang dapat dicetak (PDF).
 
-3. **Setup Database**
-   - Import `database/schema.sql`
-   - Konfigurasi koneksi di `config/database.php`
+**🧠 Algoritma Rekomendasi (Smart Priority)**
+Sistem tidak menggunakan bobot mapel rumit, melainkan menggunakan logika Weighted Sum Model (WSM) dan Nearest Neighbor (Closest Match):
 
-4. **Konfigurasi Aplikasi**
-   - Edit `config/app.php` untuk URL dan pengaturan
+1. Perhitungan Skor Siswa
+Jalur SNBP (Rapor & TKA):
+Skor = ((Rata-rata Rapor Smt 1-5 × 70%) + (Rata-rata TKA × 30%)) × 7.5
 
-5. **Upload Benchmark**
-   - Login sebagai admin
-   - Pergi ke menu "Import Benchmark"
-   - Upload file Excel dengan format:
-     | PTN | Program Studi | Jalur | Cutoff Min | Cutoff Avg | Tahun |
-     |-----|---------------|-------|------------|------------|-------|
-     | UNDIP | Teknik Informatika | SNBP | 85.0 | 90.0 | 2024 |
+Jalur SNBT (Tryout):
+Skor = Rata-rata dari 7 subtes UTBK
 
-## Penggunaan
+2. Logika Penentuan Rekomendasi (Sistem Alternatif)
+Sistem menyeleksi program studi dari database menggunakan urutan prioritas berikut:
 
-### Login Default
-- **Admin**: admin@sekolah.id / password
-- **Siswa**: Buat akun baru atau import dari Excel
+Pemisahan Rumpun: Memisahkan prodi menjadi kategori Saintek dan Soshum menggunakan Keyword-Based Classification.
 
-### Alur Kerja
-1. **Admin** import data siswa dan benchmark cutoff
-2. **Siswa** login dan lengkapi profil
-3. **Siswa** input nilai rapor semester 1-6
-4. **Siswa** input nilai try out (jika ada)
-5. Sistem generate rekomendasi Top 3 jurusan + PTN
-6. **Siswa** lihat rekomendasi dengan estimasi peluang
+Smart Priority (Kasta Peluang):
 
-## Teknologi
+Prioritas 1 (Aman/Target): Prodi yang Passing Grade-nya <= Skor Siswa.
 
-- **Backend**: PHP 7.4+, MySQL 5.7+
-- **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
-- **Library**: PhpSpreadsheet (untuk import Excel)
-- **UI Framework**: Custom CSS dengan Inter Font
+Prioritas 2 (Tantangan): Prodi yang Passing Grade-nya > Skor Siswa.
 
-## Browser Support
+Closest Match (Selisih Terkecil): Sistem mencari prodi yang selisih Passing Grade-nya paling dekat dengan Skor Siswa ABS(passing_grade - skor_siswa).
 
-- Chrome 80+
-- Firefox 75+
-- Safari 13+
-- Edge 80+
+Batas Kuota: Mengambil maksimal 5 prodi terbaik untuk Saintek dan 5 untuk Soshum.
 
-## Lisensi
+3. Estimasi Peluang (Indikator Kelulusan)
+Rasio dihitung dari Skor Siswa / Passing Grade Prodi:
 
-Copyright © 2024 - Sistem Rekomendasi PTN
+🟢 Tinggi (Aman): Rasio ≥ 1.10 (Skor jauh di atas PG)
+
+🟡 Sedang (Target): Rasio ≥ 1.00 (Skor setara atau sedikit di atas PG)
+
+🔴 Rendah (Tantangan): Rasio < 1.00 (Skor di bawah PG)
+
+**🗄️ Struktur Database**
+Tabel Utama
+users - Autentikasi login (role: admin/siswa).
+
+siswa_profile - Profil lengkap, asal sekolah, rumpun, dan minat.
+
+master_mapel & paket_rumpun - Data mata pelajaran dan pengelompokan kurikulum.
+
+siswa_mapel_pilihan - Pencatatan mapel pilihan bebas siswa.
+
+nilai_rapor & nilai_rapor_detail - Header dan detail nilai rapor per semester.
+
+nilai_tka - Nilai Tes Kemampuan Akademik.
+
+nilai_tryout - Nilai skor Try Out UTBK/SNBT.
+
+ptn & prodi - Direktori Perguruan Tinggi dan Program Studi (lengkap dengan Passing Grade & Daya Tampung).
+
+rekomendasi - Menyimpan hasil generate algoritma.
+
+**⚙️ Instalasi & Konfigurasi**
+Clone Repository
+
+Bash
+git clone <repository-url>
+cd webdinda
+Setup Database
+
+Buat database baru di MySQL (contoh: web_SPK).
+
+Import file SQL dari database/schema.sql (jika ada) atau import database .sql yang telah disediakan.
+
+Konfigurasi kredensial koneksi di includes/Database.php.
+
+Pengaturan Server (PENTING untuk Import Excel)
+Sistem ini menggunakan library PhpSpreadsheet. Pastikan ekstensi zip pada PHP sudah aktif:
+
+Buka XAMPP Control Panel.
+
+Klik Config pada Apache -> Pilih PHP (php.ini).
+
+Cari baris ;extension=zip dan hapus tanda titik komanya menjadi extension=zip.
+
+Restart Apache.
+
+Install Dependencies (Opsional jika folder vendor belum ada)
+
+Bash
+composer install
+**💻 Penggunaan (Alur Kerja)**
+Login Default Admin
+Username: admin@sekolah.id
+
+Password: password
+
+Langkah Penggunaan:
+Admin melakukan import Master Data (PTN, Prodi, Passing Grade) menggunakan menu Import Data.
+
+Admin menginput data siswa beserta nilainya secara massal via Excel, atau Siswa login secara mandiri.
+
+Siswa melengkapi minat jurusan dan mengecek nilai Rapor/TKA/Tryout.
+
+Buka menu Rekomendasi Prodi (Sistem akan secara otomatis menghapus rekomendasi lama dan menghitung ulang rekomendasi baru yang fresh).
+
+Admin / Siswa mencetak hasil analisis dan rekomendasi dalam format PDF bergaya formal institusi.
+
+**🛠️ Teknologi yang Digunakan**
+Backend: PHP 7.4+ / PHP 8.x (Native OOP / PDO)
+
+Database: MySQL / MariaDB
+
+Frontend / UI:
+
+Tailwind CSS (via CDN)
+
+Font Inter & Times New Roman (untuk dokumen cetak)
+
+FontAwesome (Icons)
+
+Interaktivitas & Grafik:
+
+Chart.js (Visualisasi Tren Rapor)
+
+SweetAlert2 (Notifikasi & Pop-up Dialog)
+
+Library Tambahan:
+
+PhpSpreadsheet (Pembaca & Penulis Excel)
+
+**📝 Lisensi**
+Copyright ©2026 - Sistem Rekomendasi PTN SMA Negeri 1 Gebog Kudus.
