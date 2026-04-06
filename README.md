@@ -88,6 +88,7 @@ Sistem ini menggunakan library `PhpSpreadsheet`. Pastikan ekstensi `zip` pada PH
 Jika Anda melakukan clone langsung tanpa folder vendor, jalankan perintah berikut di terminal:
 ```bash
 composer install
+```
 
 ## 💻 Penggunaan (Alur Kerja)
 
