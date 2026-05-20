@@ -6,7 +6,7 @@
 
 define('APP_NAME', 'Sistem Rekomendasi Jurusan & PTN');
 define('APP_VERSION', '1.0.0');
-define('APP_URL', 'http://localhost/webdinda');
+define('APP_URL', 'http://localhost/Sistem-Rekomendasi-PTN-SMAN-1-Gebog-Kudus');
 
 // Paths
 define('ROOT_PATH', dirname(__DIR__));
