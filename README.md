@@ -98,7 +98,7 @@ composer install
 
 ### Langkah Penggunaan:
 1. **Admin** melakukan import *Master Data* (PTN, Prodi, Passing Grade) menggunakan menu **Import Data**.
-2. **Admin** menginput data siswa beserta nilainya secara massal via file Excel, atau **Siswa** bisa mendaftar/login secara mandiri.
+2. **Admin** menginput data siswa beserta nilainya secara massal via file Excel.
 3. **Siswa** melengkapi minat jurusan dan mengecek keakuratan nilai Rapor/TKA/Tryout di akun masing-masing.
 4. Buka menu **Rekomendasi Prodi** (Sistem akan secara otomatis menghapus rekomendasi lama dan menghitung ulang rekomendasi baru yang *fresh* berdasarkan data terbaru).
 5. **Admin / Siswa** mencetak laporan hasil analisis dan rekomendasi studi dalam format PDF dengan desain *layout* formal institusi.
